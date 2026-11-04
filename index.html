@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gasolina · Medias móviles y predicción</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="preconnect" href="https://api.preciosgasolina.es" />
   <link rel="preconnect" href="https://unpkg.com" />
   <link rel="preconnect" href="https://tile.openstreetmap.org" />
@@ -32,6 +33,7 @@
           <select id="source">
             <option value="spain" selected>España (media nacional)</option>
             <option value="station">Gasolinera cercana</option>
+            <option value="favorites">Favoritos</option>
           </select>
         </label>
 
@@ -83,8 +85,8 @@
 
     <section class="panel stations-panel" id="stationsPanel" hidden>
       <div class="stations-head">
-        <h2>Gasolineras cercanas</h2>
-        <div class="loc-controls">
+        <h2 id="stationsTitle">Gasolineras cercanas</h2>
+        <div class="loc-controls" id="locControls">
           <label class="field field--inline">
             <span>Radio</span>
             <select id="radius">
@@ -107,6 +109,33 @@
           aria-label="Buscar por dirección"
         />
         <button class="btn" type="submit" id="addressSearch">Buscar</button>
+      </form>
+      <form class="vehicle-bar" id="vehicleForm">
+        <label class="field field--inline">
+          <span>Depósito (L)</span>
+          <input
+            type="number"
+            id="vehicleTank"
+            class="vehicle-input"
+            min="1" max="200" step="1"
+            placeholder="50"
+            inputmode="numeric"
+          />
+        </label>
+        <label class="field field--inline">
+          <span>Consumo (L/100 km)</span>
+          <input
+            type="number"
+            id="vehicleConsumption"
+            class="vehicle-input"
+            min="1" max="30" step="0.1"
+            placeholder="6.5"
+            inputmode="decimal"
+          />
+        </label>
+        <p class="vehicle-hint" id="vehicleHint">
+          Introduce tu depósito y consumo para ver euros por lleno y ahorro neto frente a la media.
+        </p>
       </form>
       <p class="stations-hint" id="stationsHint">
         Usa tu ubicación, escribe una dirección o haz clic en el mapa para buscar gasolineras.
@@ -134,7 +163,7 @@
 
     <footer class="foot">
       Datos: <a href="https://preciosgasolina.es/" target="_blank" rel="noopener">preciosgasolina.es</a>
-      · La predicción es una estimación por regresión lineal, no un dato oficial.
+      · La predicción es una estimación estadística (regresión lineal o suavizado exponencial), no un dato oficial.
     </footer>
   </div>
 

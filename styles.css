@@ -17,6 +17,9 @@
 
 * { box-sizing: border-box; }
 
+/* Ensure the `hidden` attribute wins over components that set display:flex. */
+[hidden] { display: none !important; }
+
 html, body {
   margin: 0;
   padding: 0;
@@ -164,7 +167,7 @@ select:focus {
 .stations-hint { margin: 0 0 12px; color: var(--muted); font-size: 13.5px; }
 .stations-hint.error { color: var(--up); }
 
-/* ---------- Buscador de dirección ---------- */
+/* ---------- Address search ---------- */
 .address-bar {
   display: flex;
   gap: 10px;
@@ -191,7 +194,56 @@ select:focus {
   box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
 }
 
-/* ---------- Mapa ---------- */
+/* ---------- Vehicle profile ---------- */
+.vehicle-bar {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.vehicle-input {
+  width: 100%;
+  background: var(--card-2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 11px 13px;
+  font-size: 14px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.vehicle-input::placeholder { color: var(--muted); }
+
+.vehicle-input:focus {
+  outline: none;
+  border-color: var(--price);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+}
+
+.vehicle-hint {
+  flex-basis: 100%;
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+/* Savings figures inside a station row */
+.station__savings {
+  margin-top: 6px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: baseline;
+  font-size: 12.5px;
+}
+
+.station__fill { color: var(--text); font-weight: 600; }
+.station__net { font-weight: 600; }
+.station__detour { color: var(--muted); font-weight: 400; font-size: 11.5px; }
+
+/* ---------- Map ---------- */
 .map {
   width: 100%;
   height: 320px;
@@ -202,7 +254,7 @@ select:focus {
   z-index: 0;
 }
 
-/* Marcador de precio (divIcon) */
+/* Price marker (divIcon) */
 .price-pin {
   background: var(--card-2);
   color: var(--text);
@@ -230,7 +282,7 @@ select:focus {
   transform: translate(-50%, -100%) scale(1.12);
 }
 
-/* Marcador de usuario */
+/* User marker */
 .user-pin {
   width: 16px;
   height: 16px;
@@ -244,10 +296,10 @@ select:focus {
 
 .user-pin:active { cursor: grabbing; }
 
-/* Durante el arrastre, Leaflet marca el contenedor como dragging */
+/* While dragging, Leaflet flags the container as dragging */
 .leaflet-dragging .user-pin { cursor: grabbing; }
 
-/* Popups de Leaflet con el tema oscuro */
+/* Leaflet popups styled for the dark theme */
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
   background: var(--card-2);
@@ -297,10 +349,53 @@ select:focus {
   font-weight: 600;
   font-size: 14.5px;
   margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.station__name-text {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* Favorite star: outlined by default, filled with accent when active */
+.fav-star {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: color 0.15s, background 0.15s, transform 0.1s;
+}
+
+.fav-star:hover { background: rgba(255, 255, 255, 0.06); color: var(--forecast); }
+.fav-star:active { transform: scale(0.9); }
+.fav-star:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.5);
+}
+
+.fav-star__icon {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+
+.fav-star.is-fav { color: var(--forecast); }
+.fav-star.is-fav .fav-star__icon { fill: var(--forecast); }
 
 .station__meta {
   font-size: 12.5px;
@@ -318,6 +413,13 @@ select:focus {
   background: rgba(52, 211, 153, 0.14);
   color: var(--down);
   border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+/* Highlight badge for the best net-savings option */
+.badge--best {
+  background: rgba(56, 189, 248, 0.16);
+  color: var(--price);
+  border-color: rgba(56, 189, 248, 0.4);
 }
 
 .station__price {
