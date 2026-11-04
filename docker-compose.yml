@@ -1,0 +1,31 @@
+services:
+  # Serves the static app. Published only on the host loopback (127.0.0.1) so
+  # it is not exposed on the LAN; cloudflared (host network) reaches it there.
+  web:
+    build: .
+    image: sopa-web:latest
+    restart: unless-stopped
+    # Nginx serves HTTPS on 443 inside the container; published on the host
+    # loopback at 8080. cloudflared (host network) reaches https://localhost:8080.
+    ports:
+      - "127.0.0.1:8080:443"
+    volumes:
+      # Cloudflare Origin CA cert + key, read-only. Keep these OUT of git.
+      - ./deploy/certs:/etc/nginx/certs:ro
+
+  # Cloudflare Tunnel connector.
+  # Uses the HOST network so it resolves DNS via the host's /etc/resolv.conf
+  # (which correctly returns the argotunnel.com SRV records), avoiding Docker's
+  # embedded resolver 127.0.0.11 that misbehaves with SRV on this setup.
+  # In the Cloudflare dashboard, set the Public Hostname service to
+  #   https://localhost:8080   (Origin CA cert; no "No TLS Verify" needed)
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    network_mode: host
+    command: tunnel --no-autoupdate run
+    environment:
+      # Token-based named tunnel. Set TUNNEL_TOKEN in your .env file.
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN:?Set TUNNEL_TOKEN in .env}
+    depends_on:
+      - web

@@ -1,0 +1,16 @@
+# Keep the build context minimal. Note: deploy/nginx.conf IS needed by the
+# Dockerfile (COPY deploy/nginx.conf), so it must NOT be excluded here.
+# The TLS certs, however, are mounted at runtime and must NOT enter the image.
+deploy/certs/
+*.pem
+*.key
+.git
+.gitignore
+.env
+.env.example
+docker-compose.yml
+node_modules/
+*.log
+.DS_Store
+.vscode/
+.idea/

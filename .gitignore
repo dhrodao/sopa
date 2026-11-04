@@ -5,6 +5,13 @@ node_modules/
 *.log
 .DS_Store
 
+# Secretos / entorno de despliegue
+.env
+# Certificados TLS (Cloudflare Origin CA) — nunca subir al repo
+deploy/certs/
+*.pem
+*.key
+
 # Editores
 .vscode/
 .idea/
