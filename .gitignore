@@ -1,0 +1,10 @@
+# Dependencias
+node_modules/
+
+# Logs y temporales
+*.log
+.DS_Store
+
+# Editores
+.vscode/
+.idea/

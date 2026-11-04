@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gasolina · Medias móviles y predicción</title>
+  <link rel="preconnect" href="https://api.preciosgasolina.es" />
+  <link rel="preconnect" href="https://unpkg.com" />
+  <link rel="preconnect" href="https://tile.openstreetmap.org" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <div class="hero__title">
+        <span class="hero__badge">⛽ precios en vivo</span>
+        <h1>Tendencia del combustible</h1>
+        <p>Medias móviles y predicción sobre los precios oficiales de España.</p>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="controls">
+        <label class="field">
+          <span>Fuente de datos</span>
+          <select id="source">
+            <option value="spain" selected>España (media nacional)</option>
+            <option value="station">Gasolinera cercana</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Carburante</span>
+          <select id="fuel">
+            <option value="gasoline_95">Gasolina 95</option>
+            <option value="gasoline_98">Gasolina 98</option>
+            <option value="diesel">Diésel</option>
+            <option value="diesel_premium">Diésel premium</option>
+            <option value="lpg">GLP</option>
+            <option value="cng">GNC</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Histórico (días)</span>
+          <select id="days">
+            <option value="15">15 días</option>
+            <option value="30" selected>30 días</option>
+            <option value="60">60 días</option>
+            <option value="90">90 días (máx.)</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Ventana media móvil</span>
+          <select id="sma">
+            <option value="3">3 días</option>
+            <option value="5">5 días</option>
+            <option value="7" selected>7 días</option>
+            <option value="14">14 días</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Predicción (días)</span>
+          <select id="forecast">
+            <option value="3">3 días</option>
+            <option value="5">5 días</option>
+            <option value="7" selected>7 días</option>
+            <option value="14">14 días</option>
+          </select>
+        </label>
+
+        <button id="reload" class="btn" type="button">Actualizar</button>
+      </div>
+    </section>
+
+    <section class="panel stations-panel" id="stationsPanel" hidden>
+      <div class="stations-head">
+        <h2>Gasolineras cercanas</h2>
+        <div class="loc-controls">
+          <label class="field field--inline">
+            <span>Radio</span>
+            <select id="radius">
+              <option value="2">2 km</option>
+              <option value="5" selected>5 km</option>
+              <option value="10">10 km</option>
+              <option value="20">20 km</option>
+            </select>
+          </label>
+          <button id="geolocate" class="btn btn--ghost" type="button">📍 Usar mi ubicación</button>
+        </div>
+      </div>
+      <form class="address-bar" id="addressForm">
+        <input
+          type="text"
+          id="addressInput"
+          class="address-input"
+          placeholder="O escribe una dirección, p. ej. Gran Vía 1, Madrid"
+          autocomplete="off"
+          aria-label="Buscar por dirección"
+        />
+        <button class="btn" type="submit" id="addressSearch">Buscar</button>
+      </form>
+      <p class="stations-hint" id="stationsHint">
+        Usa tu ubicación, escribe una dirección o haz clic en el mapa para buscar gasolineras.
+      </p>
+      <div id="map" class="map" hidden></div>
+      <ul class="station-list" id="stationList"></ul>
+    </section>
+
+    <section class="metrics" id="metrics" aria-live="polite"></section>
+
+    <section class="panel chart-panel">
+      <div class="chart-head">
+        <h2 id="chartTitle">Evolución del precio</h2>
+        <div class="legend">
+          <span class="legend__item"><i class="dot dot--price"></i>Precio medio</span>
+          <span class="legend__item"><i class="dot dot--sma"></i>Media móvil</span>
+          <span class="legend__item"><i class="dot dot--forecast"></i>Predicción</span>
+        </div>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="chart" role="img" aria-label="Gráfica de evolución del precio del combustible"></canvas>
+        <div id="status" class="status"></div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      Datos: <a href="https://preciosgasolina.es/" target="_blank" rel="noopener">preciosgasolina.es</a>
+      · La predicción es una estimación por regresión lineal, no un dato oficial.
+    </footer>
+  </div>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script src="app.js"></script>
+</body>
+</html>
