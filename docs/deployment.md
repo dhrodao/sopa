@@ -12,8 +12,9 @@ Browser ──HTTPS──> Cloudflare edge ──Tunnel──> cloudflared (infr
 
 ## Architecture notes (why it is set up this way)
 
-- Nginx is published on **host port 8080** (all interfaces) so the connector on
-  the infra host can reach it at `http://<this-host-ip>:8080`. Restrict that
+- Nginx is published on **host port 8080** (all interfaces, configurable with
+  `WEB_PORT`) so the connector on the infra host can reach it at
+  `http://<this-host-ip>:8080`. Restrict that
   port to the infra host with your firewall if the LAN is not fully trusted.
 - Nginx serves plain **HTTP on port 80** inside the container, published on
   host port 8080 above.
@@ -40,7 +41,9 @@ git clone git@github.com:dhrodao/sopa.git
 cd sopa
 ```
 
-No `.env` is needed.
+No `.env` is needed unless you want a host port other than 8080: copy
+`.env.example` to `.env` and set `WEB_PORT`. The tunnel's Public Hostname URL
+must use the same port.
 
 ## 3. Build and run
 
@@ -85,7 +88,7 @@ docker compose up -d --build
   Public Hostname service type is `HTTPS` but Nginx speaks plain HTTP. Set it to
   **HTTP** → `<this-host-ip>:8080`.
 - **`Bind for 0.0.0.0:8080 failed: port is already allocated`**: another
-  service uses 8080. Change the host port in `docker-compose.yml`
-  (`<port>:80`) and the Public Hostname URL accordingly.
+  service uses 8080. Set `WEB_PORT` in `.env` to a free port and update the
+  Public Hostname URL accordingly.
 - **502 from Cloudflare**: the connector cannot reach `<this-host-ip>:8080`.
   Check the container is up, the IP/port in the route, and any firewall.
