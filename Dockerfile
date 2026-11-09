@@ -8,12 +8,10 @@ COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
 COPY index.html app.js styles.css favicon.svg /usr/share/nginx/html/
 COPY docs/ /usr/share/nginx/html/docs/
 
-EXPOSE 443
+EXPOSE 80
 
-# Note: `nginx -t` is NOT run at build time because the TLS cert/key are
-# mounted as a volume at runtime (deploy/certs) and are absent during build.
+# Validate the Nginx config at build time.
+RUN nginx -t
 
-# Health check over HTTPS (self-reachable; --no-check-certificate because the
-# Origin CA cert is for the public hostname, not "localhost").
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
-  CMD wget -qO- --no-check-certificate https://localhost:443/healthz || exit 1
+  CMD wget -qO- http://localhost:80/healthz || exit 1
